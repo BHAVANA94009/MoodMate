@@ -41,7 +41,7 @@
         <div class="hero-content">
           <div class="hero-badge">⚡ Currently in your feels</div>
           <h2 id="heroTitle">Feeling bored? We got you</h2>
-          <p id="heroSubtitle">One tap before you open more tabs</p>
+          <p id="heroSubtitle">Pick your vibe below</p>
 
           <div class="mood-buttons">
             <button class="mood-btn active" data-mood="bored">😐 Bored</button>
@@ -51,7 +51,7 @@
           </div>
 
           <div class="secondary-actions">
-            <button class="random-btn glass" id="randomMoodBtn">🎲 Hit Me Different</button>
+            <button class="random-btn glass" id="randomMoodBtn">🎲 Yeet Me Random</button>
             <div class="history glass">
               <span class="history-label">Last vibes:</span>
               <div id="historyContainer"></div>
@@ -60,45 +60,32 @@
         </div>
       </section>
 
-      <section class="cards-grid">
-        <article class="dashboard-card glass stagger-card">
-          <div class="card-header">
-            <div class="header-left">
-              <span>😂</span>
-              <h3>Funny</h3>
-            </div>
-            <button class="action-pill-btn" data-copy="funnyInsight">📋 Copy</button>
-          </div>
-          <p class="content-display" id="funnyInsight">Loading...</p>
-        </article>
+      <!-- Action Buttons - Manual Control -->
+      <section class="action-buttons-section glass fade-up hidden" id="actionButtonsSection">
+        <h3>What do you want?</h3>
+        <div class="content-type-buttons">
+          <button class="content-btn" data-type="funny">😂 Funny</button>
+          <button class="content-btn" data-type="meme">💀 Meme</button>
+          <button class="content-btn" data-type="motivation">⚡ Motivation</button>
+        </div>
+      </section>
 
-        <article class="dashboard-card glass stagger-card">
-          <div class="card-header">
-            <div class="header-left">
-              <span>📱</span>
-              <h3>Meme</h3>
-            </div>
-            <button class="action-pill-btn" data-copy="memeCaption">📋 Copy</button>
+      <!-- Result Card -->
+      <section class="result-card glass stagger-card hidden" id="resultCard">
+        <div class="card-header">
+          <div class="header-left">
+            <span id="resultIcon">😂</span>
+            <h3 id="resultTitle">Funny</h3>
           </div>
-          <p class="content-display" id="memeCaption">Loading...</p>
-        </article>
-
-        <article class="dashboard-card glass stagger-card">
-          <div class="card-header">
-            <div class="header-left">
-              <span>💬</span>
-              <h3>Motivation</h3>
-            </div>
-            <button class="action-pill-btn" data-copy="motivationText">📋 Copy</button>
-          </div>
-          <p class="content-display" id="motivationText">Loading...</p>
-        </article>
+          <button class="action-pill-btn" id="copyResultBtn">📋 Copy</button>
+        </div>
+        <p class="content-display" id="resultText">Click a button above</p>
       </section>
 
       <section class="analytics-row fade-up">
         <div class="journal-box glass">
           <div class="box-header">
-            <h3>📝 Dump Your Thoughts</h3>
+            <h3>📝 Share Your Thoughts</h3>
             <span class="save-status-indicator" id="saveIndicator">Saved fr</span>
           </div>
           <textarea id="journalInput" placeholder="Be honest... what's the vibe rn?"></textarea>
@@ -112,8 +99,8 @@
               <span class="metric-label">Mood Flips</span>
             </div>
             <div class="metric-card">
-              <span class="metric-value" id="activeStreakMetric">1d</span>
-              <span class="metric-label">No Break Streak</span>
+              <span class="metric-value" id="activeStreakMetric">0d</span>
+              <span class="metric-label">Day Streak</span>
             </div>
           </div>
         </div>
