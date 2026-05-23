@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MoodMate — AI Vibe Fixer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="background-blur blur-1" id="blur1"></div>
+  <div class="background-blur blur-2" id="blur2"></div>
+
+  <header class="global-nav-container">
+    <nav class="navbar glass">
+      <div class="brand">
+        <div class="brand-icon">✨</div>
+        <div>
+          <h1>MoodMate <span class="version-tag">VIBES</span></h1>
+          <p>AI that gets your chaos</p>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <div class="mood-chip glass">
+          <span id="activeMoodEmoji">😐</span>
+          <span id="activeMoodText">Bored</span>
+        </div>
+        <button class="icon-btn glass" id="soundBtn">🔊</button>
+        <button class="icon-btn glass" id="themeBtn">🌙</button>
+      </div>
+    </nav>
+  </header>
+
+  <div class="app-shell">
+    <main class="dashboard-layout">
+
+      <section class="hero glass fade-up">
+        <div class="hero-content">
+          <div class="hero-badge">⚡ Currently in your feels</div>
+          <h2 id="heroTitle">Feeling bored? We got you</h2>
+          <p id="heroSubtitle">One tap before you open more tabs</p>
+
+          <div class="mood-buttons">
+            <button class="mood-btn active" data-mood="bored">😐 Bored</button>
+            <button class="mood-btn" data-mood="lazy">😴 Lazy</button>
+            <button class="mood-btn" data-mood="stressed">😵 Stressed</button>
+            <button class="mood-btn" data-mood="energetic">⚡ Energetic</button>
+          </div>
+
+          <div class="secondary-actions">
+            <button class="random-btn glass" id="randomMoodBtn">🎲 Hit Me Different</button>
+            <div class="history glass">
+              <span class="history-label">Last vibes:</span>
+              <div id="historyContainer"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cards-grid">
+        <article class="dashboard-card glass stagger-card">
+          <div class="card-header">
+            <div class="header-left">
+              <span>😂</span>
+              <h3>Funny</h3>
+            </div>
+            <button class="action-pill-btn" data-copy="funnyInsight">📋 Copy</button>
+          </div>
+          <p class="content-display" id="funnyInsight">Loading...</p>
+        </article>
+
+        <article class="dashboard-card glass stagger-card">
+          <div class="card-header">
+            <div class="header-left">
+              <span>📱</span>
+              <h3>Meme</h3>
+            </div>
+            <button class="action-pill-btn" data-copy="memeCaption">📋 Copy</button>
+          </div>
+          <p class="content-display" id="memeCaption">Loading...</p>
+        </article>
+
+        <article class="dashboard-card glass stagger-card">
+          <div class="card-header">
+            <div class="header-left">
+              <span>💬</span>
+              <h3>Motivation</h3>
+            </div>
+            <button class="action-pill-btn" data-copy="motivationText">📋 Copy</button>
+          </div>
+          <p class="content-display" id="motivationText">Loading...</p>
+        </article>
+      </section>
+
+      <section class="analytics-row fade-up">
+        <div class="journal-box glass">
+          <div class="box-header">
+            <h3>📝 Dump Your Thoughts</h3>
+            <span class="save-status-indicator" id="saveIndicator">Saved fr</span>
+          </div>
+          <textarea id="journalInput" placeholder="Be honest... what's the vibe rn?"></textarea>
+        </div>
+
+        <div class="telemetry-box glass">
+          <h3>📊 Your Vibe Stats</h3>
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <span class="metric-value" id="totalShiftsMetric">0</span>
+              <span class="metric-label">Mood Flips</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-value" id="activeStreakMetric">1d</span>
+              <span class="metric-label">No Break Streak</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="toast-hub" id="toastHub"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
