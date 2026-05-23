@@ -1,186 +1,161 @@
 const MOODS = {
   bored: {
-    funny: ["Scrolling again?", "Brain buffering..."],
-    meme: ["Me doing nothing for hours"],
-    motivation: ["Start small"]
+    funny: "CEO confidence, intern execution.",
+    meme: "After one reel: time to fix my life.",
+    motivation: "Boredom is a launchpad. Pick one tiny thing."
   },
   lazy: {
-    funny: ["Bed is winning"],
-    meme: ["Tomorrow myth"],
-    motivation: ["Even 1% matters"]
+    funny: "My to-do list is doing fine without me.",
+    meme: "POV: bed has gravitational pull today.",
+    motivation: "Rest is fuel. Then move 1%."
   },
   stressed: {
-    funny: ["100 tabs open in brain"],
-    meme: ["Overthinking pro mode"],
-    motivation: ["One step at a time"]
+    funny: "Brain has 47 tabs open. None responding.",
+    meme: "Deadline: tomorrow. Me: stares at wall.",
+    motivation: "Breathe in 4, hold 4, out 6. You got this."
   },
   energetic: {
-    funny: ["CEO mode ON"],
-    meme: ["Start 10 things finish 0"],
-    motivation: ["Use energy NOW"]
+    funny: "Caffeine + chaos = main character energy.",
+    meme: "Ran 3 errands and 1 marathon before lunch.",
+    motivation: "Use the energy before it fades."
   }
 };
 
+// --- State ---
 let currentMood = "bored";
+let counts  = JSON.parse(localStorage.getItem("mm_counts")  || '{"bored":0,"lazy":0,"stressed":0,"energetic":0}');
+let history = JSON.parse(localStorage.getItem("mm_history") || "[]");
+let changes = parseInt(localStorage.getItem("mm_changes")   || "0", 10);
 
-let changes = parseInt(localStorage.getItem("changes") || "0");
-let streak = parseInt(localStorage.getItem("streak") || "1");
-let lastDate = localStorage.getItem("lastDate");
-
-let moodHistory = JSON.parse(localStorage.getItem("history") || "[]");
-let moodCount = JSON.parse(localStorage.getItem("moodCount") || "{}");
-let weeklyData = JSON.parse(localStorage.getItem("weekly") || "{}");
-
-// INIT COUNTS
-Object.keys(MOODS).forEach(m => {
-  if (!moodCount[m]) moodCount[m] = 0;
-});
-
-// RANDOM PICK
-function pick(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-// SAVE WEEKLY DATA
-function saveWeeklyMood(mood) {
-  let today = new Date().toDateString();
-
-  if (!weeklyData[today]) {
-    weeklyData[today] = [];
+// --- Streak logic ---
+const today = new Date().toDateString();
+let streakData = JSON.parse(localStorage.getItem("mm_streak") || '{"streak":1,"lastDate":""}');
+if (streakData.lastDate !== today) {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  if (streakData.lastDate === yesterday.toDateString()) {
+    streakData.streak += 1;
+  } else if (streakData.lastDate !== "") {
+    streakData.streak = 1;
   }
-
-  weeklyData[today].push(mood);
-
-  localStorage.setItem("weekly", JSON.stringify(weeklyData));
+  streakData.lastDate = today;
+  localStorage.setItem("mm_streak", JSON.stringify(streakData));
 }
+document.getElementById("streak").textContent  = streakData.streak;
+document.getElementById("changes").textContent = changes;
 
-// SHOW MOOD
-function showMood(mood, count = true) {
+// --- Core display function ---
+// trackSession=true  → user mood click (records counts + changes)
+// trackSession=false → internal call (Hit Me Different / bad auto-refresh / init)
+function showMood(mood, trackSession) {
   currentMood = mood;
+  document.body.dataset.mood = mood;
+  document.getElementById("liveMood").textContent = "Mood " + cap(mood);
 
-  let data = MOODS[mood];
+  document.querySelectorAll(".mood-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.mood === mood);
+  });
 
-  document.getElementById("funny").innerText = pick(data.funny);
-  document.getElementById("meme").innerText = pick(data.meme);
-  document.getElementById("motivation").innerText = pick(data.motivation);
+  const m = MOODS[mood];
+  fade("funny",      m.funny);
+  fade("meme",       m.meme);
+  fade("motivation", m.motivation);
 
-  document.getElementById("suggestion").innerText = "";
-
-  if (count) {
+  if (trackSession) {
+    counts[mood] = (counts[mood] || 0) + 1;
     changes++;
-    localStorage.setItem("changes", changes);
-    document.getElementById("changes").innerText = changes;
-
-    moodHistory.push(mood);
-    localStorage.setItem("history", JSON.stringify(moodHistory));
-
-    moodCount[mood]++;
-    localStorage.setItem("moodCount", JSON.stringify(moodCount));
-
-    saveWeeklyMood(mood);
-
-    updateAnalytics();
-    renderWeeklyChart();
+    document.getElementById("changes").textContent = changes;
+    history = [mood, ...history.filter(h => h !== mood)].slice(0, 4);
+    save();
   }
+
+  renderCounts();
+  renderDistribution();
+  renderHistory();
+  document.getElementById("suggestion").textContent = "";
 }
 
-// HIT ME DIFFERENT
-document.getElementById("hitMe").onclick = () => {
-  showMood(currentMood, true);
+function fade(id, text) {
+  const el = document.getElementById(id);
+  el.style.transition = "opacity .25s, transform .25s";
+  el.style.opacity = 0;
+  el.style.transform = "translateY(6px)";
+  setTimeout(() => {
+    el.textContent = text;
+    el.style.opacity = 1;
+    el.style.transform = "translateY(0)";
+  }, 220);
+}
+
+function cap(s) { return s[0].toUpperCase() + s.slice(1); }
+
+function save() {
+  localStorage.setItem("mm_counts",  JSON.stringify(counts));
+  localStorage.setItem("mm_history", JSON.stringify(history));
+  localStorage.setItem("mm_changes", String(changes));
+}
+
+function renderCounts() {
+  document.querySelectorAll(".count").forEach(el => {
+    el.textContent = counts[el.dataset.c] || 0;
+  });
+}
+
+function renderDistribution() {
+  const total = Object.values(counts).reduce((a, b) => a + b, 0) || 1;
+  const meta = {
+    bored:     { e: "😐", cls: "b-bored" },
+    lazy:      { e: "😴", cls: "b-lazy" },
+    stressed:  { e: "😵", cls: "b-stressed" },
+    energetic: { e: "⚡", cls: "b-energetic" }
+  };
+  document.getElementById("distribution").innerHTML =
+    Object.keys(meta).map(k => {
+      const c   = counts[k] || 0;
+      const pct = Math.round((c / total) * 100);
+      return `<div class="dist-row">
+        <div class="dist-top"><span class="l">${meta[k].e} ${cap(k)}</span><span>${c} · ${pct}%</span></div>
+        <div class="bar"><span class="${meta[k].cls}" style="width:${pct}%"></span></div>
+      </div>`;
+    }).join("");
+}
+
+function renderHistory() {
+  const e = { bored: "😐", lazy: "😴", stressed: "😵", energetic: "⚡" };
+  document.getElementById("history").innerHTML =
+    history.map((h, i) =>
+      `<li><span>${e[h]} ${cap(h)}</span><span class="rank">#${history.length - i}</span></li>`
+    ).join("") || '<li class="rank">No history yet</li>';
+}
+
+// Hit Me Different — no stat tracking
+function hitDifferent() {
+  const others = Object.keys(MOODS).filter(m => m !== currentMood);
+  showMood(others[Math.floor(Math.random() * others.length)], false);
+}
+
+// Feedback
+document.getElementById("good").onclick    = () => {
+  document.getElementById("suggestion").textContent = "Glad you liked it 👍";
+};
+document.getElementById("neutral").onclick = () => {
+  document.getElementById("suggestion").textContent = "Try Hit Me Different 🎲";
+};
+document.getElementById("bad").onclick     = () => {
+  document.getElementById("suggestion").textContent = "Switching vibe 🎲";
+  hitDifferent();
 };
 
-// MOOD CLICK
-document.querySelectorAll(".mood").forEach(btn => {
-  btn.onclick = () => showMood(btn.dataset.mood, true);
+// Mood buttons — user-initiated, track session
+document.querySelectorAll(".mood-btn").forEach(b => {
+  b.onclick = () => showMood(b.dataset.mood, true);
 });
 
-// FEEDBACK
-function feedback(type) {
+// Hit Me Different button
+document.getElementById("hitBtn").onclick = hitDifferent;
 
-  if (type === "good") {
-    document.getElementById("suggestion").innerText = "Glad you liked it 👍";
-  }
-
-  if (type === "neutral") {
-    document.getElementById("suggestion").innerText = "Try Hit Me Different 🎲";
-  }
-
-  if (type === "bad") {
-    document.getElementById("suggestion").innerText = "Switching vibe 🎲";
-    showMood(currentMood, true);
-  }
-}
-
-document.getElementById("good").onclick = () => feedback("good");
-document.getElementById("neutral").onclick = () => feedback("neutral");
-document.getElementById("bad").onclick = () => feedback("bad");
-
-// STREAK
-function updateStreak() {
-  let today = new Date().toDateString();
-
-  if (lastDate !== today) {
-    let diff = new Date(today) - new Date(lastDate || today);
-    let days = diff / (1000 * 60 * 60 * 24);
-
-    if (days === 1) streak++;
-    else streak = 1;
-
-    localStorage.setItem("streak", streak);
-    localStorage.setItem("lastDate", today);
-  }
-
-  document.getElementById("streak").innerText = streak;
-}
-
-// ANALYTICS
-function updateAnalytics() {
-
-  let stats = document.getElementById("stats");
-  stats.innerHTML = "";
-
-  Object.keys(moodCount).forEach(m => {
-    let li = document.createElement("li");
-    li.innerText = `${m} → ${moodCount[m]} times`;
-    stats.appendChild(li);
-  });
-
-  let history = document.getElementById("history");
-  history.innerHTML = "";
-
-  moodHistory.slice(-10).forEach(m => {
-    let li = document.createElement("li");
-    li.innerText = m;
-    history.appendChild(li);
-  });
-}
-
-// WEEKLY CHART (NEW 🔥)
-function renderWeeklyChart() {
-  let chart = document.getElementById("chart");
-  chart.innerHTML = "";
-
-  let days = Object.keys(weeklyData).slice(-7);
-
-  days.forEach(day => {
-    let moods = weeklyData[day];
-
-    let count = moods.length;
-
-    let bar = "█".repeat(count);
-
-    let div = document.createElement("div");
-    div.innerHTML = `
-      <b>${day}</b><br/>
-      ${bar} (${count})
-    `;
-
-    chart.appendChild(div);
-  });
-}
-
-// INIT
-updateStreak();
-updateAnalytics();
-renderWeeklyChart();
+// Init — no tracking
 showMood("bored", false);
+renderCounts();
+renderDistribution();
+renderHistory();

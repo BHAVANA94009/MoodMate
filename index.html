@@ -1,62 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>MoodMate AI Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MoodMate AI</title>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+  <div class="bg-orbs">
+    <span class="orb orb1"></span>
+    <span class="orb orb2"></span>
+    <span class="orb orb3"></span>
+  </div>
 
-<h1>✨ MoodMate AI</h1>
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">✦</div>
+        <div>
+          <h1>Mood<span class="grad-text">Mate</span> AI</h1>
+          <p class="tagline">Your vibe, decoded in real time.</p>
+        </div>
+      </div>
+      <div class="status-pill">
+        <span class="dot"></span>
+        <span>Live session ·</span>
+        <strong id="liveMood">Mood Bored</strong>
+      </div>
+    </header>
 
-<p id="subtitle">Select your mood</p>
+    <section class="glass card mood-card">
+      <h2>How are you feeling?</h2>
+      <p class="muted">Tap a mood to refresh your dashboard.</p>
+      <div class="mood-grid">
+        <button class="mood-btn" data-mood="bored">
+          <span class="emoji">😐</span>
+          <span class="check">☺</span>
+          <h3>Bored</h3>
+          <p><span class="count" data-c="bored">0</span> sessions</p>
+        </button>
+        <button class="mood-btn" data-mood="lazy">
+          <span class="emoji">😴</span>
+          <span class="check">☺</span>
+          <h3>Lazy</h3>
+          <p><span class="count" data-c="lazy">0</span> sessions</p>
+        </button>
+        <button class="mood-btn" data-mood="stressed">
+          <span class="emoji">😵</span>
+          <span class="check">☺</span>
+          <h3>Stressed</h3>
+          <p><span class="count" data-c="stressed">0</span> sessions</p>
+        </button>
+        <button class="mood-btn" data-mood="energetic">
+          <span class="emoji">⚡</span>
+          <span class="check">☺</span>
+          <h3>Energetic</h3>
+          <p><span class="count" data-c="energetic">0</span> sessions</p>
+        </button>
+      </div>
+      <button id="hitBtn" class="hit-btn">🎲 Hit Me Different</button>
+    </section>
 
-<!-- MOODS -->
-<div>
-  <button class="mood" data-mood="bored">😐 Bored</button>
-  <button class="mood" data-mood="lazy">😴 Lazy</button>
-  <button class="mood" data-mood="stressed">😵 Stressed</button>
-  <button class="mood" data-mood="energetic">⚡ Energetic</button>
-</div>
+    <section class="content-grid">
+      <div class="glass card content-card funny">
+        <span class="label">😂 FUNNY</span>
+        <p id="funny">—</p>
+      </div>
+      <div class="glass card content-card meme">
+        <span class="label">📱 MEMES</span>
+        <p id="meme">—</p>
+      </div>
+      <div class="glass card content-card motiv">
+        <span class="label">💬 MOTIVATION</span>
+        <p id="motivation">—</p>
+      </div>
+    </section>
 
-<button id="hitMe">🎲 Hit Me Different</button>
+    <section class="glass card feedback">
+      <span class="label">FEEDBACK</span>
+      <h3>How was this vibe?</h3>
+      <div class="fb-row">
+        <button id="good" class="fb-btn">👍<span>Love</span></button>
+        <button id="neutral" class="fb-btn">😐<span>Meh</span></button>
+        <button id="bad" class="fb-btn">👎<span>Skip</span></button>
+      </div>
+      <p id="suggestion" class="suggestion"></p>
+    </section>
 
-<hr/>
+    <section class="stats-grid">
+      <div class="glass card stat-card">
+        <span class="label">MOOD CHANGES</span>
+        <div class="stat-icon grad-blue">🔄</div>
+        <h2><span id="changes">0</span><small>today</small></h2>
+      </div>
+      <div class="glass card stat-card">
+        <span class="label">STREAK</span>
+        <div class="stat-icon grad-pink">🔥</div>
+        <h2><span id="streak">1</span><small>day</small></h2>
+      </div>
+    </section>
 
-<!-- CONTENT -->
-<h3>😂 Funny</h3>
-<p id="funny"></p>
+    <section class="glass card">
+      <span class="label">📈 MOOD DISTRIBUTION</span>
+      <div id="distribution" class="dist-list"></div>
+    </section>
 
-<h3>📱 Meme</h3>
-<p id="meme"></p>
+    <section class="glass card">
+      <span class="label">🕒 MOOD HISTORY</span>
+      <ul id="history" class="history-list"></ul>
+    </section>
 
-<h3>💬 Motivation</h3>
-<p id="motivation"></p>
+    <footer>Built with vibes · MoodMate AI © 2026</footer>
+  </div>
 
-<!-- FEEDBACK -->
-<h3>💭 Feedback</h3>
-<button id="good">👍</button>
-<button id="neutral">😐</button>
-<button id="bad">👎</button>
-
-<p id="suggestion"></p>
-
-<hr/>
-
-<!-- STATS -->
-<h2>📊 Your Analytics</h2>
-
-<p>🔄 Mood Changes: <span id="changes">0</span></p>
-<p>🔥 Streak: <span id="streak">1</span> day</p>
-
-<h3>📈 Mood Distribution</h3>
-<ul id="stats"></ul>
-
-<h3>🧠 Mood History</h3>
-<ul id="history"></ul>
-
-<h3>📊 Weekly Mood Chart</h3>
-<div id="chart"></div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
